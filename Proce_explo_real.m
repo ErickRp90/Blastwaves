@@ -7,7 +7,7 @@ clc
 
 %Lectura de archivos coordenadas de estaciones y pruebas.
 %oldfolder = cd('C:\Users\erick\Desktop\Programas\Matlab');
-oldfolder = cd('C:\Users\ERamosP\Desktop\');
+oldfolder = cd('C:\Users\ERamosP\\Desktop\Proyectos\Programacion\Matlab\Explosiones\');
 addpath(oldfolder)
 folder = uigetdir('C:\Users\ERamosP\Desktop\\Proyectos\IINGEN\Estudios de vibracion\BLOQUE ALACTE\',...
     'Selecciona carpeta de estaciones y pruebas');
@@ -262,3 +262,4 @@ for i = 1:nexp
 end
 
 fclose('all');
+cd 'C:\Users\ERamosP\\Desktop\Proyectos\Programacion\Matlab\Explosiones\'
