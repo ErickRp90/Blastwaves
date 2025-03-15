@@ -1,5 +1,6 @@
 %Procesamiento explosiones.
-%Poryecto HUELITLI-3D.
+%Programa para realizar el análisis de vibraciones producidas por
+%explosiones.
 
 clearvars
 clc
