@@ -2,9 +2,6 @@
 %Huelitli-3D.
 clear  clc
 
-
-
-%este es el cambio que reALICÉ.
 %% 
 %Leer archivos las tres señales en formato gcf. Se cargan con el
 %comando uigetfile en una celda. Se seleccionan todos los archivos.
