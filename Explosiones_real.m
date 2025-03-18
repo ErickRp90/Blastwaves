@@ -2,27 +2,26 @@
 %Huelitli-3D.
 clear  clc
 
-
-
-%este es el cambio que reALICÉ.
 %% 
 %Leer archivos las tres señales en formato gcf. Se cargan con el
 %comando uigetfile en una celda. Se seleccionan todos los archivos.
 %Archivos de 1 hora para que no se sobreescriban.
 %Falla cuando cargo solo un archivo.
 
-S=uigetfile('*.gcf','Selecciona los archivos','Multiselect','on');%uigetfile-Abre un archivo con cuadro de dialogo.
-a=length(S); %Siempre igual a 3.
+loc_files = uigetdir('C:\', 'Selecciona carpeta de datos');
+
+S = uigetfile(fullfile(loc_files, '*.gcf'), 'Selecciona los archivos', 'Multiselect','on');%uigetfile-Abre un archivo con cuadro de dialogo.
+a = length(S);
 
 %La información de las señales se guarda por columnas en una celda.
 %El numero de filas son las señales para procesar.
 %Las columnas son: 1) ID, 2) sps, 3) tStart, 4) numero de muestras, 
 %5) vector de tiempo, 6) vector de señal, 7) vector de frecuencias, 
 %8) vector de amplitud, 9) vector de fase.
-INFO=cell(a,9);
+INFO = cell(a,9);
 
 %Se leen los datos de los archivos cargados con uigetfile.
-Data=cell(a,1);%Guardar los datos en una celda.
+%Data = cell(a,1);%Guardar los datos en una celda.
 for i=1:a
     Si=cell2mat(S(i));%Convert cell array to ordinary array of the underlying data type.
     [samples,streamID,sps,tStart]=readgcffile(num2str(Si));
