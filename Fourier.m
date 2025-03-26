@@ -4,45 +4,45 @@ function [Datos]=Fourier(Datos)
 %Los valores de salida son los vectores de tiempo y señal cortados. CELDA.
 %Las columnas son: 1) ID, 2) sps, 3) tStart, 4) numero de muestras, 
 %5) vector de tiempo, 6) vector de señal, 7) vector de frecuencias, 
-%8) vector de amplitud, 9) vector de fase.
+%8) vector de amplitud de Fourier, 9) vector de fase.
 
 %Cantidad de señales
-Datlen = size(Datos);
-Datlen = Datlen(1);
+nsig = size(Datos);
+nsig = nsig(1);
 
-% N = 2^nextpow2(Datlen);
+% N = 2^nextpow2(nsig);
 
 %Se realiza la Tranformada rapida de Fourier (fft).
-for i = 1:Datlen
-    Datos{i,7} = fft(Datos{i,6})/Datos{i,4};
+for i = 1:nsig
+    Datos{i, 7} = fft(Datos{i, 6})/Datos{i, 4};
 end
 
 %Espectro de amplitud single-sided.
-for i = 1:Datlen
-    Datos{i,8} = abs(Datos{i,7});
+for i = 1:nsig
+    Datos{i, 8} = abs(Datos{i, 7});
 end
 
-for i = 1:Datlen
+for i = 1:nsig
     if mod(Datos{i,4}, 2) == 0
-        Datos{i,8} = Datos{i,8}(1:(Datos{i,4})/2+1);
+        Datos{i, 8} = Datos{i, 8}(1:(Datos{i, 4})/2+1);
     else
-        Datos{i,8} = Datos{i,8}(1:(Datos{i,4}-1)/2+1);
+        Datos{i, 8} = Datos{i, 8}(1:(Datos{i, 4}-1)/2+1);
     end
 end
 
-for i = 1:Datlen
-    Datos{i,8}(2:end-1) = 2*Datos{i,8}(2:end-1);
+for i = 1:nsig
+    Datos{i, 8}(2:end-1) = 2*Datos{i, 8}(2:end-1);
 end
 
 % %Filtro Golay para suavizamiento del espectro.
-% for i=1:Datlen
+% for i=1:nsig
 %     Datos{i,8}=sgolayfilt(Datos{i,8},3,51);
 % end
 
 %Se realiza el eje de frecuencias.
-for i=1:Datlen
-    Datos{i,7}=Datos{i,2}*(0:(Datos{i,4}/2))/Datos{i,4};
-    Datos{i,7}=Datos{i,7}';
+for i=1:nsig
+    Datos{i, 7} = Datos{i, 2}*(0:(Datos{i, 4}/2))/Datos{i, 4};
+    Datos{i, 7} = Datos{i, 7}';
 end
 
 

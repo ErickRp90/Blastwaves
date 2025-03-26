@@ -28,7 +28,6 @@ for i=1:a
     INFO{i,3}=tStart;
     INFO{i,4}=length(samples);
     INFO{i,6}=samples;
-    %INFO{i,6}=filtrar(INFO{i,6},1/INFO{i,2},1,50,4,5);
 end
 
 %%
@@ -137,7 +136,7 @@ else
         sps1(1:n/2+1) = sps1(1:n/2+1)./T;sps1(1)=0;
         INFO{i, 6} = ifft([sps1(1:n/2+1);conj(sps1(n/2:-1:2))],'symmetric');
         INFO{i, 6} = INFO{i, 6}*1000;    %Para mm/s
-        INFO{i,6}=filtrar(INFO{i,6},1/INFO{i,2},1,50,4,5);
+        INFO{i, 6} = filtrar(INFO{i,6},1/INFO{i,2},1,50,4,5);
     end
 end
 %% 
@@ -165,8 +164,8 @@ for i=1:a
     hold on
     plot(INFO{i,5},INFO{i,6}, 'b', LineWidth=2)
     datetick('x','HH:MM:SS')
-    %c=INFO{1,3}+1/24;
-    c=INFO{1,3}+2/24;
+    c=INFO{1,3}+1/24;
+    %c=INFO{1,3}+2/24;
     xlim([INFO{1,3} c]);
     ax = gca;
     ax.FontSize =13;
@@ -186,12 +185,12 @@ savefig(h,'Señales.fig');
 
 %% 
 %Se corta una ventana para analizar el sismo en frecuencias.
-[INFOven]=ventana2(INFO); %Se llama a la funcion para cortar el sismo.
+[INFOven] = ventana2(INFO); %Se llama a la funcion para cortar el sismo.
 save('INFO.mat','INFOven');
 
 %%
 %Análisis de Fourier del sismo cortado. Espectro de amplitud.
-[INFOFou]=Fourier(INFOven); %Se llama a la funcion para realizar fft.
+[INFOFou] = Fourier(INFOven); %Se llama a la funcion para realizar fft.
 
 %Exportar explosion en formato txt.
 % carp = uigetdir('C:\Users\erick\Desktop\Proyectos\Procesamiento Huelitli-3D\Explosiones 2da parte\');
