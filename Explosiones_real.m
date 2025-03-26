@@ -106,16 +106,16 @@ if corr == a
    INFO{3, 6} = INFO{3, 6}*(1/gs(3))*(1/gr(3))*1000;
 else
     %Con polos y zeros
-    pole = [-0.14803+1i*0.14803;-0.14803-1i*0.14803;-314.15927];
+    %pole = [-0.14803+1i*0.14803;-0.14803-1i*0.14803;-314.15927];
     %   -2199.11;-471.24];  %En rad/s
     %pole = [-0.1486+1i*0.1486;-0.1486-1i*0.1486;-1130.97;-1005.31;-502.65];  %En rad/s
-    %pole = [-2.22111+1i*2.22111;-2.22111-1i*2.22111;-391.95515+1i*850.69303;-391.95515-1i*850.69303;...
-    %    -2199.11486;-471.2389];  %En rad/s
+    pole = [-0.1486+1i*0.1486;-0.1486-1i*0.1486;-391.95515+1i*850.69303;-391.95515-1i*850.69303;...
+        -2199.11486;-471.2389];  %En rad/s
     %pole = [-0.14803+1i*0.14803;-0.14803-1i*0.14803;-314.15927];
-    zero = [0.0;0.0;999.03];
+    zero = [0.0;0.0];
     %c = [-85435200;-83711400;-84412133.89];
-    %c = [2.26120e21;2.27020e21;2.27441e21];
-    c = [-7.81572e7;-7.86721e7;-7.89937e7];        %Normalizacion total.
+    c = [2.26544e21;2.27776e21;2.25464e21];
+    %c = [-7.81572e7;-7.86721e7;-7.89937e7];        %Normalizacion total.
 
     % n = length(samples);
     % % n = 81300;    %Para señales con tiempos distintos.
@@ -136,7 +136,7 @@ else
         sps1(1:n/2+1) = sps1(1:n/2+1)./T;sps1(1)=0;
         INFO{i, 6} = ifft([sps1(1:n/2+1);conj(sps1(n/2:-1:2))],'symmetric');
         INFO{i, 6} = INFO{i, 6}*1000;    %Para mm/s
-        INFO{i, 6} = filtrar(INFO{i,6},1/INFO{i,2},1,50,4,5);
+        INFO{i, 6} = filtrar(INFO{i,6},1/INFO{i,2},1,100,4,5);
     end
 end
 %% 
@@ -199,7 +199,7 @@ save('INFO.mat','INFOven');
 % writetable(T, fullfile(carp, ['LA11_23' '.txt']), 'Delimiter', ' ');
 %% 
 %Ploteo de archivos.
-tven =50;
+tven =50*(INFOven{1, 2}/100);
 %Frecuencia vs ppv.
 for i = 1:a
     [~, ind] = max(abs(INFOven{i, 6}));
@@ -211,7 +211,7 @@ for i = 1:a
     esp_wind(2:end-1) = 2*esp_wind(2:end-1);
     INFOven{i, 8} = esp_wind;
     %Eje de frecuencias.
-    frec2 = 100*(0:(length(wind)/2))/length(wind);
+    frec2 = INFOven{i, 2}*(0:(length(wind)/2))/length(wind);
     frec2 = frec2';
     INFOven{i, 7} = frec2;
 %     [~, ind2] = max(esp_wind);
@@ -222,9 +222,9 @@ for i=1:a
     h = figure(4);
     pos1 = [0.05 1-0.3*i 0.6 0.25];
     subplot('Position', pos1)
-    plot(INFOven{i,5}(1:400, 1),INFOven{i,6}(1:400, 1), 'b', lineWidth=1)
-    datetick('x','HH:MM:SS')
-    title(['',INFOven{i,1}], FontSize=18)
+    plot(INFOven{i, 5}(1:400, 1), INFOven{i, 6}(1:400, 1), 'b', lineWidth=1)
+    datetick('x', 'HH:MM:SS')
+    title(['', INFOven{i, 1}], FontSize=18)
     ax = gca;
     ax.TitleHorizontalAlignment = 'right';
     ax.FontSize = 13;
@@ -251,22 +251,24 @@ for i=1:a
     pos2 = [0.7 1-0.3*i 0.25 0.25];
     subplot('Position', pos2)
     plot(INFOven{i, 7}, INFOven{i, 8}, 'b', linewidth=1)
-    title(['',INFOFou{i,1}], FontSize=18)
+    title(['',INFOFou{i, 1}], FontSize=18)
     ax = gca;
     ax.TitleHorizontalAlignment = 'right';
     ax.FontSize = 13;
     xlabel('Frecuencia, Hz')
     ylabel('Amplitud')
-    set(gca, 'XScale', 'log')
+    %set(gca, 'XScale', 'log')
     %set(gca, 'YScale', 'log')
     grid on
-    xlim([1 50]);
-    ylim([0 3])
+    xlim([1 100]);
+    ylim([0 0.8])
     [~, indf] = max(abs(INFOven{i, 8}));
     maxf = INFOven{i, 7}(indf);
     maxaf = INFOven{i, 8}(indf);
     hold on
     plot(maxf, maxaf, '+', 'MarkerSize', 12, 'LineWidth', 1.5, 'Color', 'r')
     txt = ['Frecuencia máxima: ' num2str(round(maxf)) ' Hz'];
-    text(10, 2.2,txt, 'FontSize', 12, 'FontWeight','bold')
+    text(10, 0.7,txt, 'FontSize', 12, 'FontWeight','bold')
 end
+
+save('INFO200sps.mat','INFOven');
