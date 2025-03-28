@@ -97,7 +97,7 @@ corr = 1;
 if corr == a
 
    %Valores ganancia del sensor en [V/m/s]. Orden [EW NS Z]
-   gs = [800 800 800];
+   gs = [798 800 800];
    %Valores ganancia registrador en [cuentas/V]. Orden [EW NS Z]
    gr = [311915.159 313185.092 314465.409];
 
@@ -106,16 +106,16 @@ if corr == a
    INFO{3, 6} = INFO{3, 6}*(1/gs(3))*(1/gr(3))*1000;
 else
     %Con polos y zeros
-    %pole = [-0.14803+1i*0.14803;-0.14803-1i*0.14803;-314.15927];
+    pole = [-0.14803+1i*0.14803;-0.14803-1i*0.14803;-314.15927];
     %   -2199.11;-471.24];  %En rad/s
     %pole = [-0.1486+1i*0.1486;-0.1486-1i*0.1486;-1130.97;-1005.31;-502.65];  %En rad/s
-    pole = [-0.1486+1i*0.1486;-0.1486-1i*0.1486;-391.95515+1i*850.69303;-391.95515-1i*850.69303;...
-        -2199.11486;-471.2389];  %En rad/s
+    %pole = [-0.1486+1i*0.1486;-0.1486-1i*0.1486;-391.95515+1i*850.69303;-391.95515-1i*850.69303;...
+    %    -2199.11486;-471.2389];  %En rad/s
     %pole = [-0.14803+1i*0.14803;-0.14803-1i*0.14803;-314.15927];
-    zero = [0.0;0.0];
+    zero = [0.0;0.0;999.03];
     %c = [-85435200;-83711400;-84412133.89];
-    c = [2.26544e21;2.27776e21;2.25464e21];
-    %c = [-7.81572e7;-7.86721e7;-7.89937e7];        %Normalizacion total.
+    %c = [2.26969e21;2.27725e21;2.27774e21];
+    c = [-4.91076e8;-4.94311e8;-4.96332e8];        %Normalizacion total.
 
     % n = length(samples);
     % % n = 81300;    %Para señales con tiempos distintos.
@@ -172,7 +172,7 @@ for i=1:a
     title(['',INFO{i,1}], FontSize=18)
     xlabel('Tiempo, HH:MM:SS')
     ylabel('Velocidad de partícula, mm/s')
-    ylim([-10 10])
+    ylim([-5 5])
     grid on
     box on
 
@@ -198,13 +198,15 @@ save('INFO.mat','INFOven');
 %     'VariableNames', {'E', 'N', 'Z'});
 % writetable(T, fullfile(carp, ['LA11_23' '.txt']), 'Delimiter', ' ');
 %% 
-%Ploteo de archivos.
+%Determinación del máximo en tiempo y en frecuencia de la señal de
+%vibración.
 tven =50*(INFOven{1, 2}/100);
 %Frecuencia vs ppv.
 for i = 1:a
     [~, ind] = max(abs(INFOven{i, 6}));
     %[~, ind] = min(abs(info{i, m+2}-info{i, m+5}));
     wind = INFOven{i, 6}(ind-tven:ind+tven);
+    wind = wind.*hann(length(wind));    %Multiplicar por ventana Hanning.
     fwind = fft(wind)/length(wind);
     esp_wind = abs(fwind);
     esp_wind = esp_wind(1:(length(esp_wind)-1)/2+1);
@@ -218,11 +220,14 @@ for i = 1:a
 %     INFO{i, m+9} = frec(ind2);
 end
 
+
+%%
+%Graficas para evaluar los resultados.
 for i=1:a
     h = figure(4);
     pos1 = [0.05 1-0.3*i 0.6 0.25];
     subplot('Position', pos1)
-    plot(INFOven{i, 5}(1:400, 1), INFOven{i, 6}(1:400, 1), 'b', lineWidth=1)
+    plot(INFOven{i, 5}(1:3000, 1), INFOven{i, 6}(1:3000, 1), 'b', lineWidth=1)
     datetick('x', 'HH:MM:SS')
     title(['', INFOven{i, 1}], FontSize=18)
     ax = gca;
@@ -231,7 +236,7 @@ for i=1:a
     xlabel('Tiempo, HH:MM:SS')
     ylabel('Velocidad de partícula, mm/s')
     %xlim([738789.6825836805 738789.6826824073])
-    ylim([-10 10])
+    ylim([-2 2])
     grid on
     [~, indm] = max(abs(INFOven{i, 6}));
     maxt = INFOven{i, 5}(indm);
@@ -246,7 +251,7 @@ for i=1:a
     fill(xrec, yrec, col, 'FaceAlpha', 0.2)
     velmax = round(max(abs(INFOven{i, 6})), 2);
     txt = ['Velocidad de partícula máxima: ' num2str(velmax) ' mm/s'];
-    text(INFOven{i, 5}(330),6,txt, 'FontSize', 12, 'FontWeight','bold')
+    text(INFOven{i, 5}(330),1,txt, 'FontSize', 12, 'FontWeight','bold')
     
     pos2 = [0.7 1-0.3*i 0.25 0.25];
     subplot('Position', pos2)
@@ -261,14 +266,14 @@ for i=1:a
     %set(gca, 'YScale', 'log')
     grid on
     xlim([1 100]);
-    ylim([0 0.8])
+    ylim([0 0.2])
     [~, indf] = max(abs(INFOven{i, 8}));
     maxf = INFOven{i, 7}(indf);
     maxaf = INFOven{i, 8}(indf);
     hold on
     plot(maxf, maxaf, '+', 'MarkerSize', 12, 'LineWidth', 1.5, 'Color', 'r')
     txt = ['Frecuencia máxima: ' num2str(round(maxf)) ' Hz'];
-    text(10, 0.7,txt, 'FontSize', 12, 'FontWeight','bold')
+    text(10, 0.1,txt, 'FontSize', 12, 'FontWeight','bold')
 end
 
-save('INFO200sps.mat','INFOven');
+%save('INFO200sps.mat','INFOven');

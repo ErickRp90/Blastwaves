@@ -33,8 +33,8 @@ end
 
 %Se realiza una nueva celda con los datos del recorte.REAL!!!!!!!!!1!!
 for i = 1:Datlen
-    Datos{i,4} = 1101;  %Para explosiones 21 s. 1s antes y 20 despues.
-    for j = 1:1101
+    Datos{i,4} = 4101;  %Para explosiones 21 s. 1s antes y 20 despues.
+    for j = 1:4101
         tven(j,1) = Datos{i,5}(idxin(i,1)-100+j,1);
         sven(j,1) = Datos{i,6}(idxin(i,1)-100+j,1);
     end
@@ -43,18 +43,3 @@ for i = 1:Datlen
     Datos{i,3} = Datos{i,5}(1,1); %Tiempo de inicio de la señal cortada.
 end
 
-%% 
-%Ploteo de archivos.
-% 
-% for i=1:Datlen
-%     h=figure(3);
-%     %subplot(Datlen,1,i)
-%     hold on
-%     plot(Datos{i,5},Datos{i,6}-(i-1)*10000000,'k')
-%     %datetick('x','HH:MM:SS')
-%     %title(['',Datos{i,1}])
-%     %xlabel('Tiempo')
-%     %ylabel('Amplitud')
-%     grid on
-% end
-% savefig(h,'Evento.fig');
